@@ -5,18 +5,21 @@ import com.mmutawe.projects.chat.system.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Log4j2
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
+@RequestMapping(path = "/users")
 public class UserController {
 
     private final UserRepository userRepository;
 
-    @GetMapping("/user/register/{username}")
+    @GetMapping("/register/{username}")
     public ResponseEntity<Void> register(@PathVariable String username){
         log.info("Registering user with username: {}", username);
 
@@ -31,4 +34,13 @@ public class UserController {
         userRepository.save(user);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping
+    public Set<String> fetchAll(){
+        return userRepository.findAll().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toSet());
+    }
+
+
 }
